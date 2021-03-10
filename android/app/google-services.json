@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "863241821660",
+    "firebase_url": "https://dolphin911-e8cf7.firebaseio.com",
+    "project_id": "dolphin911-e8cf7",
+    "storage_bucket": "dolphin911-e8cf7.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:863241821660:android:338dd540c0936b686d4319",
+        "android_client_info": {
+          "package_name": "com.u911.dolphinwhale"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "863241821660-801qht8b0n8sknpmhr8pitt0299j9bs7.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA2FGNqDNEJPH_yBVwkcASOz0i0NiFfjTM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "863241821660-801qht8b0n8sknpmhr8pitt0299j9bs7.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
