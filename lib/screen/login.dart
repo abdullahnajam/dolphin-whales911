@@ -36,13 +36,7 @@ class _SignInState extends State<Login> {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey,
-                  Colors.blueGrey
-                ]
-            )
+            color: Colors.blueGrey,
         ),
         child: Form(
           key: _formKey,
@@ -157,7 +151,7 @@ class _SignInState extends State<Login> {
                                 }
                                 else
                                 {
-                                  Navigator.push(context, new MaterialPageRoute(builder: (context) => HomePage()));
+                                  Navigator.pushReplacement(context, new MaterialPageRoute(builder: (context) => HomePage()));
                                 }
                               }
                             },

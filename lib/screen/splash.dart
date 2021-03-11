@@ -29,7 +29,7 @@ class _SplashScreenState extends State<Splash> {
   }
 
   void navigationPage() {
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => Login()));
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (BuildContext context) => HomePage()));
   }
 
   @override

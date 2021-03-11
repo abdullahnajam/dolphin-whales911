@@ -60,12 +60,7 @@ class _RegisterState extends State<Register> {
       body: Container(
         width: double.infinity,
         decoration: BoxDecoration(
-            gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                colors: [
-                  Colors.blueGrey,
-                  Colors.blueGrey              ]
-            )
+          color:Colors.blueGrey,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

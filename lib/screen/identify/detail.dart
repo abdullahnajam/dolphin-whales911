@@ -1,9 +1,17 @@
 import 'package:dolphinwhale/screen/drawer.dart';
+import 'package:dolphinwhale/screen/identify/animals.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Detail extends StatelessWidget {
+class Detail extends StatefulWidget {
+  Animals _animals;
+  @override
+  _DetailState createState() => _DetailState();
 
+  Detail(this._animals);
+}
+
+class _DetailState extends State<Detail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -15,29 +23,29 @@ class Detail extends StatelessWidget {
 
           child:  ListView(
             children: <Widget>[
-              new Image.asset('assets/doli.jpg',fit: BoxFit.cover,width: MediaQuery.of(context).size.width,height: 200,),
+              new Image.network(widget._animals.imgUrl,fit: BoxFit.cover,width: MediaQuery.of(context).size.width,height: 200,),
               SizedBox(height: 10,),
               Container(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: <Widget>[
-                    Text("Harbor Seal",textAlign: TextAlign.center,style: TextStyle(fontSize: 22,fontWeight: FontWeight.w800),),
-                    Text("Phoca Vitulina",textAlign: TextAlign.center,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),),
-                  ],
-                )
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    children: <Widget>[
+                      Text(widget._animals.name,textAlign: TextAlign.center,style: TextStyle(fontSize: 22,fontWeight: FontWeight.w800),),
+                      Text(widget._animals.scientificName,textAlign: TextAlign.center,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w600),),
+                    ],
+                  )
               ),
               SizedBox(height: 10,),
               Container(
-                margin: EdgeInsets.all(15),
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: <Widget>[
-                    Text("Other Names",textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
-                    Text("Common seal, hair seal",textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
-                  ],
-                )
+                  margin: EdgeInsets.all(15),
+                  width: MediaQuery.of(context).size.width,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Text("Other Names",textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
+                      Text(widget._animals.otherNames,textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
+                    ],
+                  )
               ),
               SizedBox(height: 10,),
               Container(
@@ -48,7 +56,7 @@ class Detail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text("Family",textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
-                      Text("Phocidae",textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
+                      Text(widget._animals.family,textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
                     ],
                   )
               ),
@@ -61,7 +69,7 @@ class Detail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text("Status",textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
-                      Text("Protected",textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
+                      Text(widget._animals.status,textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
                     ],
                   )
               ),
@@ -74,7 +82,7 @@ class Detail extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: <Widget>[
                       Text("Size",textAlign: TextAlign.left,style: TextStyle(fontSize: 16,fontWeight: FontWeight.w700),),
-                      Text("Adults to 1.7 - 1.9 m (5.6 - 6.3 ft), 120 kg; males slightly larger than females. At birth, pups are approx. 0.7 m (30 in ), 10 kg",textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
+                      Text(widget._animals.size,textAlign: TextAlign.left,style: TextStyle(fontSize: 13,fontWeight: FontWeight.w500),),
                     ],
                   )
               ),
@@ -88,3 +96,5 @@ class Detail extends StatelessWidget {
 
   }
 }
+
+

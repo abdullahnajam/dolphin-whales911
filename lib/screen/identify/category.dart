@@ -1,10 +1,39 @@
 import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/identify/list.dart';
+import 'package:dolphinwhale/screen/model/mammal_category.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Category extends StatelessWidget {
+class Category extends StatefulWidget {
+  @override
+  _CategoryState createState() => _CategoryState();
+}
 
+class _CategoryState extends State<Category> {
+  final databaseReference = FirebaseDatabase.instance.reference();
+
+
+  Future<List<MammalCategory>> getCategoryList() async {
+    List<MammalCategory> list=new List();
+    print("here");
+    await databaseReference.child("mammals").once().then((DataSnapshot dataSnapshot){
+      var KEYS= dataSnapshot.value.keys;
+      var DATA=dataSnapshot.value;
+
+      for(var individualKey in KEYS){
+        MammalCategory category = new MammalCategory(
+            individualKey,
+            DATA[individualKey]['name']
+        );
+        print("key ${category.id}");
+        list.add(category);
+
+      }
+
+    });
+    return list;
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,75 +42,47 @@ class Category extends StatelessWidget {
         title: new Text("Identify"),
       ),
       body: SafeArea(
-          child: ListView(
-            children: <Widget>[
-              GestureDetector(
-                child: Card(
-                  child: ListTile(
-                    leading: FlutterLogo(),
-                    title: Text('Dolphins and Porpoises'),
-                    trailing: Icon(Icons.chevron_right),
-                  ),
-                ),
-                onTap: (){
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => FishList())
+          child: FutureBuilder<List<MammalCategory>>(
+            future: getCategoryList(),
+            builder: (context,snapshot){
+              if(snapshot.hasData){
+                if(snapshot.data!=null && snapshot.data.length>0){
+                  return ListView.builder(
+                    itemCount: snapshot.data.length,
+                    itemBuilder: (BuildContext context,int index){
+                      return GestureDetector(
+                        child: Card(
+                          child: ListTile(
+                            leading: FlutterLogo(),
+                            title: Text(snapshot.data[index].name),
+                            trailing: Icon(Icons.chevron_right),
+                          ),
+                        ),
+                        onTap: (){
+                          Navigator.push(context, new MaterialPageRoute(
+                              builder: (context) => FishList(snapshot.data[index].id))
+                          );
+                        },
+                      );
+                    },
                   );
-                },
-              ),
-
-              GestureDetector(
-                child: Card(
-                  child: ListTile(
-                    leading: FlutterLogo(),
-                    title: Text('Whales'),
-                    trailing: Icon(Icons.chevron_right),
-                  ),
-                ),
-                onTap: (){
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => FishList())
+                }
+                else {
+                  return new Center(
+                    child: Container(
+                      child: Text("No Data Found"),
+                    ),
                   );
-                },
-              ),
-
-              GestureDetector(
-                child: Card(
-                  child: ListTile(
-                    leading: FlutterLogo(),
-                    title: Text('Manatees'),
-                    trailing: Icon(Icons.chevron_right),
-                  ),
-                ),
-                onTap: (){
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => FishList())
-                  );
-                },
-              ),
-
-              GestureDetector(
-                child: Card(
-                  child: ListTile(
-                    leading: FlutterLogo(),
-                    title: Text('Seals and Sea Lions'),
-                    trailing: Icon(Icons.chevron_right),
-                  ),
-                ),
-                onTap: (){
-                  Navigator.push(context, new MaterialPageRoute(
-                      builder: (context) => FishList())
-                  );
-                },
-              ),
-
-
-
-
-
-
-
-            ],
+                }
+              }
+              else if (snapshot.hasError) {
+                return Text('Error : ${snapshot.error}');
+              } else {
+                return new Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+            },
           )
       ),
       drawer: AppDrawer(),

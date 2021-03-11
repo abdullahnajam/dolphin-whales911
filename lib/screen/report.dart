@@ -1,11 +1,67 @@
 import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/identify/list.dart';
+import 'package:dolphinwhale/screen/login.dart';
 import 'package:dolphinwhale/screen/photo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+class Report extends StatefulWidget {
+  @override
+  _ReportState createState() => _ReportState();
+}
 
-class Report extends StatelessWidget {
+class _ReportState extends State<Report> {
+  Future<void> _loginDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Sign In Required'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('You are not currently logged into the app. To use this feature you must sign in',style: TextStyle(fontSize: 14),),
+                SizedBox(height: 15,),
+                Text('Do you want to sign in?',style: TextStyle(fontSize: 12),)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            RaisedButton(
+              color: Colors.blueGrey,
 
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login())
+                );
+              },
+            ),
+            RaisedButton(
+              color: Colors.blueGrey,
+
+              child: Text('No'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  _checkForLogin() async{
+    if (await FirebaseAuth.instance.currentUser() != null) {
+      // signed in
+      Navigator.pushReplacement(context, new MaterialPageRoute(
+          builder: (context) => Photo()));
+    } else {
+      _loginDialog();
+
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,9 +145,7 @@ class Report extends StatelessWidget {
                                 color: Colors.green,
                                 child: Text('Send Photo',style: TextStyle(color: Colors.white)),
                                 onPressed: (){
-                                  Navigator.push(context, new MaterialPageRoute(
-                                      builder: (context) => Photo())
-                                  );
+                                  _checkForLogin();
                                 },
                               )
                             ],
@@ -112,3 +166,4 @@ class Report extends StatelessWidget {
 
   }
 }
+
