@@ -1,5 +1,6 @@
 import 'package:dolphinwhale/alert/helpAlert.dart';
 import 'package:dolphinwhale/screen/FAQs.dart';
+import 'package:dolphinwhale/screen/google_map.dart';
 import 'package:dolphinwhale/screen/help.dart';
 import 'package:dolphinwhale/screen/home.dart';
 import 'package:dolphinwhale/screen/identify/category.dart';
@@ -172,6 +173,9 @@ class AppDrawer extends StatelessWidget {
               builder: (context) => profileUser())
           )),
           _createDrawerItem(icon: Icons.image,text: 'Photo',onTap: () => {_photo()}),
+          _createDrawerItem(icon: Icons.place,text: 'View Map',onTap: () => Navigator.pushReplacement(context, new MaterialPageRoute(
+              builder: (context) => MapScreen())
+          )),
 
           Divider(color: Colors.grey,),
           _createDrawerItem(icon: Icons.question_answer,text: 'FAQs',onTap: () => Navigator.pushReplacement(context, new MaterialPageRoute(

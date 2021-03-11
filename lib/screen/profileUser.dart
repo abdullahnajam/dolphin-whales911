@@ -1,6 +1,8 @@
 import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/login.dart';
+import 'package:dolphinwhale/screen/model/user_data.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -26,7 +28,6 @@ class _profileUserState extends State<profileUser> {
       isLoggedInChecked=true;
     });
   }
-  FirebaseUser user;
   Future<void> _signOut() async {
     try {
       await FirebaseAuth.instance.signOut();
@@ -46,6 +47,42 @@ class _profileUserState extends State<profileUser> {
   bool isLoggedInStatus=false;
   bool isLoggedInChecked=false;
 
+  final databaseReference = FirebaseDatabase.instance.reference();
+
+
+  Future<UserData> getUser() async {
+    FirebaseUser user=await FirebaseAuth.instance.currentUser();
+    List<UserData> list=new List();
+    print("here");
+    UserData userData=null;
+    await databaseReference.child("users").child(user.uid).once().then((DataSnapshot dataSnapshot){
+      var KEYS= dataSnapshot.key;
+      var DATA=dataSnapshot.value;
+
+       userData = new UserData(
+          KEYS,
+          DATA['username'],
+          DATA['email'],
+          DATA['password'],
+          DATA['age'],
+          DATA['role'],
+          DATA['phoneNumber'],
+          DATA['description'],
+          DATA['token']
+      );
+
+      /*for(var individualKey in KEYS){
+
+        print("key ${userData.id}");
+        if(userData.id==user.uid)
+          list.add(userData);
+
+      }*/
+
+    });
+    return userData;
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,94 +95,120 @@ class _profileUserState extends State<profileUser> {
         drawer: AppDrawer(),
       body: SafeArea(
         child: isLoggedInChecked?
-            isLoggedInStatus?Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(40)),
-              ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Stack(
-                      children: <Widget>[
-
-                        Container(
-                          width: double.infinity,
-                          height: 220.0,
+            isLoggedInStatus?
+                FutureBuilder<UserData>(
+                  future: getUser(),
+                  builder: (context,snapshot){
+                    if(snapshot.hasData){
+                      if(snapshot.data!=null){
+                        return Container(
                           decoration: BoxDecoration(
-                              color: Colors.blueGrey,
-                              borderRadius: BorderRadius.only(
-                                  bottomLeft: Radius.circular(30.0),
-                                  bottomRight: Radius.circular(30.0))),
-                        ),
+                            borderRadius: BorderRadius.all(Radius.circular(40)),
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                Stack(
+                                  children: <Widget>[
 
-                        Padding(
-                          padding: const EdgeInsets.only(top: 150.0),
-                          child: Center(
-                            child: Container(
-                              height: 150.0,
-                              width: 310.0,
-                              decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(20.0)),
-                                  boxShadow: [
-                                    BoxShadow(color: Colors.black12.withOpacity(0.1)),
-                                  ]),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
+                                    Container(
+                                      width: double.infinity,
+                                      height: 220.0,
+                                      decoration: BoxDecoration(
+                                          color: Colors.blueGrey,
+                                          borderRadius: BorderRadius.only(
+                                              bottomLeft: Radius.circular(30.0),
+                                              bottomRight: Radius.circular(30.0))),
+                                    ),
 
-                                  SizedBox(
-                                    height: 5.0,
-                                  ),
-                                  Text(
-                                    "username",
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 150.0),
+                                      child: Center(
+                                        child: Container(
+                                          height: 150.0,
+                                          width: 310.0,
+                                          decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius: BorderRadius.all(Radius.circular(20.0)),
+                                              boxShadow: [
+                                                BoxShadow(color: Colors.black12.withOpacity(0.1)),
+                                              ]),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: <Widget>[
+
+                                              SizedBox(
+                                                height: 5.0,
+                                              ),
+                                              Text(
+                                                snapshot.data.username,
+                                                style: TextStyle(
+                                                    color: Colors.black,
+                                                    fontFamily: "Sofia",
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 20.0),
+                                              ),
+                                              SizedBox(height: 20,),
+                                              Text(
+                                                snapshot.data.email,
+                                                style: TextStyle(
+                                                    color: Colors.black38,
+                                                    fontFamily: "Sofia",
+                                                    fontWeight: FontWeight.w300,
+                                                    fontSize: 16.0),
+                                              ),
+
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                Padding(
+                                  padding:
+                                  const EdgeInsets.only(left: 25.0, top: 40.0, bottom: 10.0),
+                                  child: Text(
+                                    "Click to Explore",
                                     style: TextStyle(
-                                        color: Colors.black,
                                         fontFamily: "Sofia",
                                         fontWeight: FontWeight.w700,
-                                        fontSize: 20.0),
-                                  ),
-                                  SizedBox(height: 20,),
-                                  Text(
-                                    "user-email@mail.com",
-                                    style: TextStyle(
-                                        color: Colors.black38,
-                                        fontFamily: "Sofia",
-                                        fontWeight: FontWeight.w300,
                                         fontSize: 16.0),
                                   ),
-
-                                ],
-                              ),
+                                ),
+                                _card(Icons.error_outline, "My Reports", () {print("report");}),
+                                _card(Icons.vpn_key, "Change Password", () {print("change password");}),
+                                _card(Icons.exit_to_app, "Logout", () {_signOut();}),
+                                SizedBox(
+                                  height: 20.0,
+                                )
+                              ],
                             ),
                           ),
-                        )
-                      ],
-                    ),
-                    Padding(
-                      padding:
-                      const EdgeInsets.only(left: 25.0, top: 40.0, bottom: 10.0),
-                      child: Text(
-                        "Click to Explore",
-                        style: TextStyle(
-                            fontFamily: "Sofia",
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16.0),
-                      ),
-                    ),
-                    _card(Icons.error_outline, "My Reports", () {print("report");}),
-                    _card(Icons.vpn_key, "Change Password", () {print("change password");}),
-                    _card(Icons.exit_to_app, "Logout", () {_signOut();}),
-                    SizedBox(
-                      height: 20.0,
-                    )
-                  ],
-                ),
-              ),
-            ):
+                        );
+                      }
+                      else {
+                        return new Center(
+                          child: Container(
+                            child: Text("No Data Found"),
+                          ),
+                        );
+                      }
+                    }
+                    else if (snapshot.hasError) {
+                      return Text('Error : ${snapshot.error}');
+                    } else {
+                      return new Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    }
+
+                  },
+                )
+                :
             Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
