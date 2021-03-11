@@ -1,3 +1,4 @@
+import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/login.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -49,6 +50,12 @@ class _profileUserState extends State<profileUser> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
+        appBar: new AppBar(
+          backgroundColor:  const Color(0xff8caec7),
+          title: new Text("Profile"),
+        ),
+        drawer: AppDrawer(),
       body: SafeArea(
         child: isLoggedInChecked?
             isLoggedInStatus?Container(
@@ -138,7 +145,25 @@ class _profileUserState extends State<profileUser> {
                   ],
                 ),
               ),
-            ):Center(child:Text("no user"))
+            ):
+            Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset("assets/nouser.png"),
+                  Container(
+                    width: MediaQuery.of(context).size.width*0.8,
+                    child: RaisedButton(
+                      color: Colors.blueGrey,
+                      child: Text('Sign In',style: TextStyle(color: Colors.white),),
+                      onPressed: () {
+                        Navigator.pushReplacement(context, new MaterialPageRoute(
+                            builder: (context) => Login())
+                        );
+                      },
+                    ),
+                  )
+                ],
+            )
             :
         CircularProgressIndicator()
       )

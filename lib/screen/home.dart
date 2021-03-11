@@ -1,8 +1,10 @@
 import 'package:cool_nav/cool_nav.dart';
 import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/identify/category.dart';
+import 'package:dolphinwhale/screen/login.dart';
 import 'package:dolphinwhale/screen/photo.dart';
 import 'package:dolphinwhale/screen/report.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'help.dart';
@@ -16,10 +18,60 @@ class HomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<HomePage> {
+  Future<void> _loginDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Sign In Required'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('You are not currently logged into the app. To use this feature you must sign in',style: TextStyle(fontSize: 14),),
+                SizedBox(height: 15,),
+                Text('Do you want to sign in?',style: TextStyle(fontSize: 12),)
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            RaisedButton(
+              color: Colors.blueGrey,
+
+              child: Text('Yes'),
+              onPressed: () {
+                Navigator.pop(context);
+                Navigator.push(context, new MaterialPageRoute(
+                    builder: (context) => Login())
+                );
+              },
+            ),
+            RaisedButton(
+              color: Colors.blueGrey,
+
+              child: Text('No'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+  _checkForLogin() async{
+    if (await FirebaseAuth.instance.currentUser() != null) {
+      // signed in
+     _photo();
+    } else {
+      _loginDialog();
+
+    }
+  }
   Future<void> _showMyDialog() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('AlertDialog Title'),
@@ -36,6 +88,7 @@ class _MyHomePageState extends State<HomePage> {
 
               child: Text('Yes'),
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => HelpMammal())
                 );
@@ -46,6 +99,7 @@ class _MyHomePageState extends State<HomePage> {
 
               child: Text('No'),
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => HelpMammal())
                 );
@@ -59,7 +113,7 @@ class _MyHomePageState extends State<HomePage> {
   Future<void> _photo() async {
     return showDialog<void>(
       context: context,
-      barrierDismissible: false, // user must tap button!
+      barrierDismissible: true, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Send Photo'),
@@ -76,6 +130,7 @@ class _MyHomePageState extends State<HomePage> {
 
               child: Text('Yes'),
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => Photo())
                 );
@@ -86,6 +141,7 @@ class _MyHomePageState extends State<HomePage> {
 
               child: Text('No'),
               onPressed: () {
+                Navigator.pop(context);
                 Navigator.push(context, new MaterialPageRoute(
                     builder: (context) => Report())
                 );
@@ -193,7 +249,7 @@ class _MyHomePageState extends State<HomePage> {
                   SizedBox(height: 20,),
                   RaisedButton(
                     onPressed: () {
-                      _photo();
+                      _checkForLogin();
                     },
                     color: Colors.blueGrey,
                     child: Text("Send Photo",style: TextStyle(color: Colors.white),),
