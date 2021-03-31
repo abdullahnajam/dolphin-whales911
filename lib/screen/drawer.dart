@@ -10,9 +10,11 @@ import 'package:dolphinwhale/screen/report.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
+import 'package:geolocator/geolocator.dart';
 import 'info.dart';
 import 'login.dart';
+import 'package:toast/toast.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class AppDrawer extends StatelessWidget {
 
@@ -151,6 +153,36 @@ class AppDrawer extends StatelessWidget {
       );
     }
 
+    Future<void> _gps() async {
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true, // user must tap button!
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Turn On GPS'),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('You GPS is Turned off'),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              RaisedButton(
+                color: Colors.blueGrey,
+
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+
+            ],
+          );
+        },
+      );
+    }
+
 
 
     return Drawer(
@@ -173,9 +205,19 @@ class AppDrawer extends StatelessWidget {
               builder: (context) => profileUser())
           )),
           _createDrawerItem(icon: Icons.image,text: 'Photo',onTap: () => {_photo()}),
-          _createDrawerItem(icon: Icons.place,text: 'View Map',onTap: () => Navigator.pushReplacement(context, new MaterialPageRoute(
-              builder: (context) => MapScreen())
-          )),
+          _createDrawerItem(icon: Icons.place,text: 'View Map',onTap: () {
+            double lat,lang;
+            final Geolocator geolocator = Geolocator()..forceAndroidLocationManager;
+            geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.best).then((Position position) {
+              print(position.latitude);
+              print(position.longitude);
+              Navigator.pushReplacement(context, new MaterialPageRoute(
+                  builder: (context) => MapSample(position.latitude,position.longitude)));
+            }).catchError((onError){
+              _gps();
+
+            });
+          }),
 
           Divider(color: Colors.grey,),
           _createDrawerItem(icon: Icons.question_answer,text: 'FAQs',onTap: () => Navigator.pushReplacement(context, new MaterialPageRoute(

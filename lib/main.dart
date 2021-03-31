@@ -1,4 +1,5 @@
 import 'package:dolphinwhale/screen/splash.dart';
+import 'package:dolphinwhale/screen/user_view_reports.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -12,7 +13,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Dolphin & Whales 911',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.grey,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: Splash(),

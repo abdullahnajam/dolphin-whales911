@@ -9,7 +9,7 @@ import 'package:progress_dialog/progress_dialog.dart';
 import 'package:toast/toast.dart';
 import './auth.dart';
 import 'login.dart';
-
+enum type {admin, user}
 class Register extends StatefulWidget {
 
   final Function toggleView;
@@ -20,6 +20,7 @@ class Register extends StatefulWidget {
 }
 
 class _RegisterState extends State<Register> {
+  bool isUser=true;
 
   Future<void> _showMyDialog(String e) async {
     return showDialog<void>(
@@ -62,6 +63,7 @@ class _RegisterState extends State<Register> {
   FocusNode myFocusNode = new FocusNode();
   String password = '';
   bool visible=false;
+  type _type = type.user;
   @override
   Widget build(BuildContext context) {
 
@@ -204,8 +206,41 @@ class _RegisterState extends State<Register> {
                               },
                             ),
                           ),
-
-
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              new Radio(
+                                value: type.user,
+                                groupValue: _type,
+                                onChanged: (type value) {
+                                  setState(() {
+                                    _type = value;
+                                    isUser = true;
+                                  });
+                                },
+                              ),
+                              new Text(
+                                'User',
+                                style: new TextStyle(fontSize: 16.0),
+                              ),
+                              new Radio(
+                                value: type.admin,
+                                groupValue: _type,
+                                onChanged: (type value) {
+                                  setState(() {
+                                    _type = value;
+                                    isUser = false;
+                                  });
+                                },
+                              ),
+                              new Text(
+                                'Admin',
+                                style: new TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ],
+                          ),
 
 
 
@@ -241,7 +276,7 @@ class _RegisterState extends State<Register> {
                                   'age': age,
                                   'token': 'token',
                                   'phoneNumber': phoneNumber,
-                                  'role': 'user',
+                                  'role': isUser?'user':'admin',
 
                                 });
                                 pr.hide();

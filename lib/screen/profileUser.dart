@@ -1,10 +1,15 @@
+import 'package:dolphinwhale/editProfile.dart';
 import 'package:dolphinwhale/screen/drawer.dart';
 import 'package:dolphinwhale/screen/login.dart';
 import 'package:dolphinwhale/screen/model/user_data.dart';
+import 'package:dolphinwhale/screen/user_view_reports.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
+import 'package:dolphinwhale/all_report.dart';
+import 'package:dolphinwhale/admin_reports.dart';
 
 class profileUser extends StatefulWidget {
   @override
@@ -43,25 +48,24 @@ class _profileUserState extends State<profileUser> {
     super.initState();
     _checkForLogin();
   }
-
+  final _formKey = GlobalKey<FormState>();
   bool isLoggedInStatus=false;
   bool isLoggedInChecked=false;
 
   final databaseReference = FirebaseDatabase.instance.reference();
 
-
+  FirebaseUser user;
   Future<UserData> getUser() async {
-    FirebaseUser user=await FirebaseAuth.instance.currentUser();
-    List<UserData> list=new List();
+    user=await FirebaseAuth.instance.currentUser();
     print("here");
-    UserData userData=null;
+    UserData userData;
     await databaseReference.child("users").child(user.uid).once().then((DataSnapshot dataSnapshot){
       var KEYS= dataSnapshot.key;
       var DATA=dataSnapshot.value;
 
        userData = new UserData(
           KEYS,
-          DATA['username'],
+          DATA['name'],
           DATA['email'],
           DATA['password'],
           DATA['age'],
@@ -70,17 +74,193 @@ class _profileUserState extends State<profileUser> {
           DATA['description'],
           DATA['token']
       );
-
-      /*for(var individualKey in KEYS){
-
-        print("key ${userData.id}");
-        if(userData.id==user.uid)
-          list.add(userData);
-
-      }*/
-
     });
+    print("user ${userData.username}");
     return userData;
+  }
+  final ageController=TextEditingController();
+  final nameController=TextEditingController();
+  final desController=TextEditingController();
+  final phoneController=TextEditingController();
+  Future<void> _editProfile(UserData user) async {
+    ageController.text=user.age;
+    nameController.text=user.username;
+    phoneController.text=user.phoneNumber;
+    desController.text=user.description;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: true, // user must tap button!
+      builder: (BuildContext context) {
+        return Card(
+            margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width*0.04,
+              right: MediaQuery.of(context).size.width*0.04,
+              top: MediaQuery.of(context).size.height*0.18,
+              bottom: MediaQuery.of(context).size.height*0.18,
+            ),
+            child: Form(
+              key: _formKey,
+              child: ListView(
+                children: [
+                  SizedBox(height: 10,),
+                  Container(
+                    margin: EdgeInsets.all(10),
+                    child: Text("Edit Profile",style: TextStyle(fontWeight: FontWeight.w600,fontSize: 22),textAlign: TextAlign.center,),
+                  ),
+                  Container(
+                    height: 60,
+                    padding: EdgeInsets.all(5),
+                    margin: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey[300]),
+                          top: BorderSide(color: Colors.grey[300]),
+                          left: BorderSide(color: Colors.grey[300]),
+                          right: BorderSide(color: Colors.grey[300]),
+
+                        )
+                    ),
+                    child: TextFormField(
+                      controller: nameController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "Name",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    height: 60,
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey[300]),
+                          top: BorderSide(color: Colors.grey[300]),
+                          left: BorderSide(color: Colors.grey[300]),
+                          right: BorderSide(color: Colors.grey[300]),
+
+                        )
+                    ),
+                    child: TextFormField(
+                      maxLines: 3,
+                      minLines: 3,
+                      controller: desController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "Description",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    height: 60,
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey[300]),
+                          top: BorderSide(color: Colors.grey[300]),
+                          left: BorderSide(color: Colors.grey[300]),
+                          right: BorderSide(color: Colors.grey[300]),
+
+                        )
+                    ),
+                    child: TextFormField(
+                      controller: ageController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "Age",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    height: 60,
+                    padding: EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(3),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey[300]),
+                          top: BorderSide(color: Colors.grey[300]),
+                          left: BorderSide(color: Colors.grey[300]),
+                          right: BorderSide(color: Colors.grey[300]),
+
+                        )
+                    ),
+                    child: TextFormField(
+                      controller: phoneController,
+                      keyboardType: TextInputType.number,
+                      decoration: InputDecoration(
+                          hintText: "Phone Number",
+                          hintStyle: TextStyle(color: Colors.grey),
+                          border: InputBorder.none
+                      ),
+                      validator: (value) {
+                        if (value.isEmpty) {
+                          return 'Please enter some text';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.all(5),
+                    child: RaisedButton(
+                      onPressed: ()async{
+
+                        if (_formKey.currentState.validate()) {
+                          FirebaseUser userForUpdate=await FirebaseAuth.instance.currentUser();
+                          databaseReference.child('users').child(userForUpdate.uid).update({
+                            'name': nameController.text,
+                            'phoneNumber': phoneController.text,
+                            'description': desController.text,
+                            'age': ageController.text,
+                          }).then((value) {
+                            Toast.show("Updated", context, duration: Toast.LENGTH_SHORT, gravity:  Toast.TOP);
+                            Navigator.pop(context);
+                          });
+                        }
+                      },
+                      color: Color(0xff8caec7),
+                      child: Text("Update Profile",style: TextStyle(color: Colors.white),),
+                    ),
+                  )
+                ],
+              ),
+            )
+        );
+      },
+    );
   }
 
 
@@ -101,6 +281,7 @@ class _profileUserState extends State<profileUser> {
                   builder: (context,snapshot){
                     if(snapshot.hasData){
                       if(snapshot.data!=null){
+                        //print(snapshot.data.username);
                         return Container(
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(40)),
@@ -179,8 +360,19 @@ class _profileUserState extends State<profileUser> {
                                         fontSize: 16.0),
                                   ),
                                 ),
-                                _card(Icons.error_outline, "My Reports", () {print("report");}),
-                                _card(Icons.vpn_key, "Change Password", () {print("change password");}),
+                                snapshot.data.role=='admin'?
+                                _card(Icons.error_outline, "All Reports", () {Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AllReports()));})
+                                :Container(),
+                                _card(Icons.error, "My Reports", () {
+                                  if(snapshot.data.role=='admin'){
+
+                                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => AdminReports()));
+                                  }
+                                  else
+                                    Navigator.push(context, MaterialPageRoute(builder: (BuildContext context) => Reports()));
+                                }),
+                                _card(Icons.edit, "Edit Profile", () {_editProfile(snapshot.data);}),
+                                //_card(Icons.vpn_key, "Change Password", () {print("change password");}),
                                 _card(Icons.exit_to_app, "Logout", () {_signOut();}),
                                 SizedBox(
                                   height: 20.0,
@@ -255,7 +447,7 @@ class _profileUserState extends State<profileUser> {
                           title,
                           style: TextStyle(
                               fontFamily: "Sofia",
-                              fontWeight: FontWeight.w400,
+                              fontWeight: FontWeight.w300,
                               fontSize: 15.5,color: Colors.black),
                         ),
                       )),

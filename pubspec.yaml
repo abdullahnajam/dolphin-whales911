@@ -45,6 +45,7 @@ dependencies:
   firebase_storage: ^3.0.8
   image_picker: ^0.6.7+4
   google_maps_flutter: ^0.5.30
+  google_map_location_picker: ^3.3.4
   firebase_core: ^0.4.4
   flutter_instagram_image_picker: ^0.3.1
 
